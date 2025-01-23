@@ -37,40 +37,52 @@ const fs = require('fs');
 //     console.log('Xóa thư mục thành công!');
 // })
 
+
+// 4. Theo dõi thay đổi file ( fs.watch )
+
+
+
 // ********* MINI Project: createFile, readFile, deleteFile ************ //
 
 
-function createFile(fileName, content) {
-    fs.writeFile(fileName, content, (err) => {
-        if(err) {
-            console.error('Error when created', err)
-        } else {
-            console.log('File created')
-        }
-    })
-}
+class FileSystem {
+    createFile(fileName, content) {
+        fs.writeFile(fileName, content, (err) => {
+            if(err) {
+                console.error('Error:', err)
+            } else {
+                console.log(`File ${fileName} created`)
+            }
+        })  
+    };
 
+    readFile(fileName) {
+        fs.readFile(fileName, 'utf-8', (err, data) => {
+            if(!(fs.existsSync(fileName))) {
+                console.error('File is not exist')
+            } else {
+                console.log('Data:', data)
+            }
+        })
+    };
 
-function readFile(fileName) {
-    fs.readFile(fileName, (err, data) => {
-        if(err) {
-            console.error('Error:', err)
-        } else {
-            console.log('Data:', data.toString())
-        }
-    })
-}
-
-function deleteFile(fileName) {
-    fs.rm(fileName, (err, data) => {
+    deteleFile(fileName) {
         if(!(fs.existsSync(fileName))) {
-            console.log('File name is not exist')
+            console.error(`${fileName} is not exits`)
         } else {
-            console.log('Deleted file:', data)
+            fs.unlink(fileName, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log('File was deleted');
+                }
+            });
         }
-    })
+    }
 }
 
-createFile('hello.txt', 'Hello NodeJS')
-readFile('hello.txt')
-deleteFile('hello.txt')
+const fileSystem = new FileSystem();
+
+fileSystem.createFile('hello.txt', 'Hello world');
+fileSystem.readFile('hello.txt');
+fileSystem.deteleFile('hello.txt')
