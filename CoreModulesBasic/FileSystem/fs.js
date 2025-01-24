@@ -85,4 +85,4 @@ const fileSystem = new FileSystem();
 
 fileSystem.createFile('hello.txt', 'Hello world');
 fileSystem.readFile('hello.txt');
-fileSystem.deteleFile('hello.txt')
+fileSystem.deteleFile('hello.txt');
