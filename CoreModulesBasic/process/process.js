@@ -2,7 +2,9 @@ const process = require('process')
 require('dotenv').config()
 
 
-console.log(process.env.NODE_VERSION)
+const { NODE_VERSION } = process.env
+
+console.log(NODE_VERSION)
 
 console.log(process.pid); // Output: ID của tiến trình
 console.log(process.title); // Output: node
