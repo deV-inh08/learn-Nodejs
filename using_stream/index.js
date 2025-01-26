@@ -53,3 +53,45 @@ writable2.on('finish', () => {
 readable.on('error', (err) => {
     console.log('Error:', err)
 })
+
+// Creating your own readable/writable stream
+const { Readable, Writable } = require('stream')
+
+
+class MyReadableStream extends Readable {
+    constructor(data, options) {
+        super(options);
+        this.data = data;
+        this.index = 0;
+    }
+
+    _read() {
+        if(this.index < this.data.length) {
+            this.push(this.data[this.index++])
+        } else {
+            this.push(null)
+        }
+    }
+};
+
+const myReadable = new MyReadableStream(['Hello', ' ', 'Stream', '!']);
+
+myReadable.on('data', (chunk) => {
+    console.log('Read data:', chunk.toString())
+})
+
+myReadable.on('end', () => {
+    console.log('The end')
+})
+
+
+class MyWriableStream extends Writable {
+    _write(chunk, encoding, callback) {
+        console.log('Write data:', chunk.toString())
+        callback()
+    }
+};
+
+const myWritable = new MyWriableStream();
+
+myWritable.write('Hello');
