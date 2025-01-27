@@ -1,6 +1,6 @@
+const url = require('url')
 const { Products } = require('../models/product.model')
 const { databaseServices } = require('../connect')
-
 
 function addProduct(request, response) {
     if(request.method === 'POST') {
@@ -30,13 +30,37 @@ function addProduct(request, response) {
                 }))
             }
         })
-
     } else {
         response.statusCode = 405;
         response.end(JSON.stringify({ message: 'Method are not allowed' }))
     }
+};
+
+
+async function searchProduct(request, response) {
+    // get 'query' from request url
+    const parseURL = url.parse(request.url, true)
+    const { product } = parseURL.query
+    const collection = databaseServices.products;
+    await collection.createIndex({
+        title: 'text',
+        description: 'text'
+    })
+    const result = await collection.find({
+        $text: {
+            $search: product
+        }
+    })
+    .toArray() // convert to Array
+
+    response.end(JSON.stringify({
+        message: 'Query successfully',
+        result: result
+    }))
+   
 }
 
 module.exports = {
-    addProduct
+    addProduct,
+    searchProduct
 };

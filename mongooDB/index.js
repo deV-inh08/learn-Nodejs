@@ -2,7 +2,7 @@
 const http = require('http')
 
 const { databaseServices } = require('./connect')
-const { addProduct } = require('./controllers/products.controller')
+const { addProduct, searchProduct } = require('./controllers/products.controller')
 
 // routes
 const routes = {
@@ -13,14 +13,20 @@ const routes = {
     },
     '/add-product': (request, response) => {
         addProduct(request, response)
+    },
+    '/search-product': (request, response) => {
+        // get 'query' from request
+        searchProduct(request, response)
+        
     }
 }
 
 // create Server
 const server = http.createServer((request, response) => {
     const { url } = request
-    if(routes[url]) {
-        return routes[url](request, response)
+    const handleURL = url.split('?')[0]
+    if(routes[handleURL]) {
+        return routes[handleURL](request, response)
     } else {
         response.statusCode = 404;
         response.end(JSON.stringify({ message: 'Page not Found' }))
