@@ -36,6 +36,9 @@ exec('ls -lh /usr', (error, stdout, stderr) => {
 })
 
 
+// Phương pháp: child_process.execFile()
+// 
+// execFile() được dùng để thực thi một file nhị phân (binary) hoặc script cụ thể mà không tạo một shell.
 execFile('node', ['-v'], (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
