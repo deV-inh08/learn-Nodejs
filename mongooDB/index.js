@@ -1,40 +1,69 @@
-// connect MongooDB
-const { MongoClient, Db } = require('mongodb')
+// core modules (30- 34)
+const http = require('http')
 
-const uri = "mongodb+srv://vinh:301108@cluster0.fjotu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const { databaseServices } = require('./connect')
+const { Products } = require('./models/product.model')
 
-const client = new MongoClient(uri);
+// routes
+const routes = {
+    '/': function(request, response) {
+        response.statusCode = 200
+        response.setHeader('Content-Type', 'text/plain');
+        response.end('Hello world')
+    },
+    '/add-product': function(request, response) {
+        if(request.method === 'POST') {
+            let body = ''
+            request.on('data', (chunk) => { // get data from 'client' request (buffer)
+                body += chunk
+            });
 
-// Function
-async function run() {
-    try {
-        await client.connect()
-        client.db('admin').command({ ping: 1 });
-        console.log('Pinged your deployment. You success connect mongoDb')
-    } catch(error) {
-        if(error) {
-            console.log('Error:', error)
-        }
-    }
-};
-
-
-// Convert Fucntion to Class
-class DatabaseServices {
-    constructor() {
-        this.client = new MongoClient(uri)
-        this.db = this.client.db('test_connect')
-    }
-
-    async connect() {
-        try {
-            await this.db.command({ ping: 1 })
-            console.log('Pinged your deployment. You success connect mongoDb')
-        } catch(err) {
-            console.log('Error:', err)
+            request.on('end', async () => {
+                try {
+                    const { title, description, price } = JSON.parse(body);
+                    if(!title || !description || !price) {
+                        response.statusCode = 400 // Bad request
+                        response.end(JSON.stringify({ message: 'Missing required fields' }))
+                        return;
+                    } else {
+                        const collection = databaseServices.products;
+                        const result = await collection.insertOne(new Products({ title, description, price }))
+                        response.statusCode = 201; // Created
+                        response.end(JSON.stringify({
+                            message: 'Product added Successfully',
+                            product: result
+                        }));
+                    }
+                } catch(error) {
+                    console.log(error)
+                    response.statusCode = 500;
+                    response.end(JSON.stringify({
+                        message: 'Error adding products',
+                        error
+                    }))
+                }
+            })
+        } else {
+            response.statusCode = 405;
+            response.end(JSON.stringify({ message: 'Method not allowed' }))
         }
     }
 }
-const databaseServices = new DatabaseServices()
+
+// create Server
+const server = http.createServer((request, response) => {
+    const { url } = request
+    if(routes[url]) {
+        return routes[url](request, response)
+    } else {
+        response.statusCode = 404;
+        response.end(JSON.stringify({ message: 'Page not Found' }))
+    }
+})
+
+server.listen(3000, () => {
+    console.log('Server is running at http://localhost:3000')
+});
 
 databaseServices.connect()
+
