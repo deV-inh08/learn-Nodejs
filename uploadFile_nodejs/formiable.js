@@ -7,9 +7,6 @@ const http = require('http');
 const formiable = require('formidable');
 const fs = require('fs');
 
-// auto created folder
-const uploadDir = './uploads';
-
 const routes = {
     '/': function(request, response) {
         response.statusCode = 200
@@ -17,6 +14,8 @@ const routes = {
         response.end('Hello nodejs server')
     },
     '/uploads': function(request, response) {
+        // auto created folder
+        const uploadDir = './uploads';
         if(!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir)
         };
