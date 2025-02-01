@@ -19,24 +19,48 @@
 // console.log('number:', a);
 // console.log('function:', hello())
 
-// // spread: Giai
-// const user1 = {
-//     name: 'Vinh',
-//     age: 20
-// }
+// spread: Giai
+const user1 = {
+    name: 'Vinh',
+    age: 20,
+    address: ['bac lieu']
+}
 
-// // spread
+// primative type (string, number, bolean, ...)
+// reference type (arrray, fn, object)
 
-// // primative type (string, number, bolean, ...)
-// const user2 = {
-//     ...user1
-// }
-// // reference type (arrray, fn, object)
+// spread
+const user2 = user1
+
+const user3 = {
+    ...user1
+}
 
 // console.log(user1)
 // console.log(user2)
-// console.log(user1 === user2)
 
+// // change property 'address'
+// user2.address = ['hcm city']
+
+// // user1 and user2 have changed
+// console.log(user1)
+// console.log(user2)
+
+// console.log(user1.address === user2.address) // true
+// console.log(user1 === user2) // true
+
+
+console.log(user1)
+console.log(user3)
+// changed property 'address'
+user1.address = ['hcm city']
+
+// after changed
+console.log(user1)
+console.log(user3)
+
+console.log(user1.address === user3.address) // true || if changed => false
+console.log(user1 === user3) // false
 
 // rest (con lai)
 function getSum(...rest) {
